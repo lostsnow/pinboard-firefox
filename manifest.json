@@ -1,0 +1,52 @@
+{
+    "manifest_version": 2,
+    "name": "Pinboard+",
+    "version": "0.1.0",
+
+    "description": "A better firefox extension for Pinboard (http://pinboard.in).",
+    "icons": {
+        "16": "/img/appicon_16.png",
+        "48": "/img/appicon_48.png",
+        "128": "/img/appicon_128.png"
+    },
+
+    "applications": {
+        "gecko": {
+            "id": "pinboard-plus@lsproc.com",
+            "strict_min_version": "45.0"
+        }
+    },
+
+    "permissions": [
+        "stroage",
+        "tabs",
+        "http://*/*",
+        "https://*/*"
+    ],
+
+    "background": {
+        "scripts": [
+            "/js/libs/jquery-1.10.1.min.js",
+            "/js/libs/underscore-min.js",
+            "/js/common.js",
+            "/js/utils.js",
+            "/js/background.js"
+        ]
+    },
+
+    "browser_action": {
+         "default_title": "Pinboard+",
+         "default_icon": "/img/icon_grey_19.png",
+         "default_popup": "/html/popup.html",
+         "icons": [
+             "/img/icon_grey_19.png",
+             "/img/icon_colored_19.png",
+             "/img/icon_grey_saving_19.png"
+         ]
+    },
+
+    "options_ui": {
+        "page": "/html/options.html",
+        "open_in_tab": true
+    }
+}

@@ -1,0 +1,155 @@
+html {
+    height: 320px;
+}
+
+body {
+    width: 480px;
+    height: 305px;
+    color: #333;
+    font-family: helvetica;
+    font-size: 12px;
+}
+
+a {
+    text-decoration: none;
+    color: #11A;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    margin: 0 0 10px 50px;
+    list-style-type: none;
+}
+
+ul .item-title {
+    text-align: right;
+    width: 3.2em;
+    display: inline-block;
+    margin: 5px 0 0 -46px;
+    display: block;
+    text-align: right;
+    position: absolute;
+}
+
+#suggest {
+    display: inline-block;
+    margin: 5px 0 0 5px;
+}
+
+#suggest a {
+    margin: 0 3px;
+    float: left;
+}
+
+#suggest a.selected {
+    color: #BEBEBE
+}
+
+#suggest a#add-all {
+    color: #888
+}
+
+#state-mask {
+    position: absolute;
+    width: 100%;
+    margin-top: 25px;
+    height: 275px;
+    background-color: #FFF;
+    opacity: 0.7;
+    z-index: 20;
+}
+
+#login-window {
+    position: absolute;
+    width: 100%;
+    height: 240px;
+    background-color: #FFF;
+    z-index: 10;
+}
+
+#login-window .meta {
+    margin: 5px 0 0 64px;
+    color: #999;
+}
+
+#header {
+    height: 25px;
+    color: #AAA;
+}
+
+#header .logout {
+    position: absolute;
+    right: 5px;
+}
+
+#header a {
+    color: #AAA;
+}
+
+#header a:hover {
+    color: #11A;
+}
+
+#header .logo {
+    float: left;
+    padding-top: 2px;
+}
+
+.logo-unlogin {
+    float: left;
+    position: absolute;
+    width: 100%;
+    background-color: #FFF;
+}
+
+#header .random {
+    color: #BBB;
+}
+
+.alert {
+    margin: auto 5px;
+    color: #333;
+    background: #CED;
+    float: left;
+    padding: 3px;
+    padding-top: 1px;
+    width: 55%;
+    border: 1px solid #ACC;
+}
+
+.auto-complete {
+    background-color: #FFF;
+    border: 1px solid #AAA;
+    box-shadow: 1px 1px 3px rgba(0, 0, 110, 0.33);
+    margin-left: 8px;
+    min-width: 200px;
+    position: absolute;
+}
+
+.auto-complete li {
+    background-color: #FFF;
+    border-bottom: 0 solid #FFF;
+    color: #2255AA;
+    margin: 0;
+    padding: 3px 5px;
+    cursor: pointer;
+}
+
+.auto-complete .active {
+    background-color: #969696;
+    color: #FFF;
+}
+
+.auto-complete li.exclude {
+    display: none;
+}
+
+#blockquote-hint {
+    color: #BEBEBE;
+    margin: 2px 0 0;
+}
