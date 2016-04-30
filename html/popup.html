@@ -95,7 +95,7 @@
                 </ul>
             </form>
         </div>
-        <div class="auto-complete" ng-show="isShowAutoComplete" ng-style="autoCompleteStyle">
+        <div class="auto-complete" ng-show="isShowAutoComplete && !isLoading" ng-style="autoCompleteStyle">
             <ul>
                 <li ng-repeat="item in autoCompleteItems" ng-class="{active: item.isActive == true}">{{item.text}}</li>
             </ul>
