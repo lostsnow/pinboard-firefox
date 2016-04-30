@@ -40,6 +40,17 @@
                     $scope.$apply();
                 });
 
+                $scope.$on('addpost-failed', function () {
+                    $scope.isLoading = false;
+                    $scope.isPostError = true;
+                    $scope.$apply();
+                });
+
+                $scope.$on('addpost-succeed', function () {
+                    renderPageInfo();
+                    $window.close();
+                });
+
                 $scope.$on('show-loading', function (e, loadingText) {
                     $scope.isLoading = true;
                     $scope.loadingText = loadingText || 'Loading...';
@@ -67,8 +78,8 @@
                             pageInfo.isSaved = false;
                             $scope.pageInfo = _.clone(pageInfo); // do not deep copy
 
-                            $scope.isInvalidTab = true;
-                            $scope.isLoading = false;
+                            $scope.loadingText = 'Please select a valid tab';
+                            $scope.isLoading = true;
                             $scope.isAnony = false;
                             $scope.$apply();
                             return;
@@ -213,8 +224,9 @@
                     chrome.tabs.query({}, function (tabs) {
                         index = tabs.length;
                         chrome.tabs.create({ url: url, index: index });
-                        var popup = chrome.extension.getViews({ type: 'popup' })[0];
-                        popup && popup.close();
+                        // avaiable from Firefox 47,
+                        // @see https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Anatomy_of_a_WebExtension#Browser_actions_2
+                        $window.close();
                     });
                 };
 
@@ -246,7 +258,6 @@
                     info.shared = $scope.pageInfo.isPrivate ? 'no' : 'yes';
                     info.toread = $scope.pageInfo.toread ? 'yes' : 'no';
                     bg.addPost(info);
-                    $window.close();
                 };
 
                 $scope.showDeleteConfirm = function () {

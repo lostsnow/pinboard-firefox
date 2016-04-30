@@ -121,6 +121,10 @@ ul .item-title {
     width: 55%;
     border: 1px solid #ACC;
 }
+.alert.alert-error {
+    background: #FFD3D3;
+    border: 1px solid #FFB3B3;
+}
 
 .auto-complete {
     background-color: #FFF;

@@ -209,20 +209,33 @@ var addPost = function (info) {
         } else {
             settings.headers = { 'Authorization': makeUserAuthHeader() };
         }
-        var jqxhr = $.ajax(settings);
+        var popup = chrome.extension.getViews({ type: 'popup' })[0],
+            jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
             if (resCode == 'done') {
                 // done
                 pages[info.url] = { isSaved: true };
+                updateSelectedTabExtIcon();
+                queryPinState({ url: info.url, isForce: true });
+                popup && popup.$rootScope &&
+                    popup.$rootScope.$broadcast('addpost-succeed');
             } else {
                 // error
                 pages[info.url] = { isSaved: false };
+                updateSelectedTabExtIcon();
+                popup && popup.$rootScope &&
+                    (popup.$rootScope.postErrorText = 'Add failed: ' + data.result_code) &&
+                    popup.$rootScope.$broadcast('addpost-failed');
             }
-            updateSelectedTabExtIcon();
-            queryPinState({ url: info.url, isForce: true });
         });
-        jqxhr.fail(function (data) { });
+        jqxhr.fail(function (data) {
+            pages[info.url] = { isSaved: false };
+            updateSelectedTabExtIcon();
+            popup && popup.$rootScope &&
+                (popup.$rootScope.postErrorText = 'Add failed: ' + data.statusText) &&
+                popup.$rootScope.$broadcast('addpost-failed');
+        });
         // change icon state
         pages[info.url] = { isSaving: true };
         updateSelectedTabExtIcon();
