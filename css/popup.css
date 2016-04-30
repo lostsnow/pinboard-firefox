@@ -47,21 +47,21 @@ ul .item-title {
 }
 
 #suggest a.selected {
-    color: #BEBEBE
+    color: #BEBEBE;
 }
 
 #suggest a#add-all {
-    color: #888
+    color: #888;
 }
 
 #state-mask {
     position: absolute;
     width: 100%;
-    margin-top: 25px;
-    height: 275px;
+    margin: 80px auto;
+    height: 165px;
     background-color: #FFF;
-    opacity: 0.7;
     z-index: 20;
+    text-align: center;
 }
 
 #login-window {
