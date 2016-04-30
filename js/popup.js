@@ -47,7 +47,6 @@
                 });
 
                 $scope.$on('addpost-succeed', function () {
-                    renderPageInfo();
                     $window.close();
                 });
 
