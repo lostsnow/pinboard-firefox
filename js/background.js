@@ -260,17 +260,25 @@ var deletePost = function (url) {
         } else {
             settings.headers = { 'Authorization': makeUserAuthHeader() };
         }
-        var jqxhr = $.ajax(settings);
+        var popup = chrome.extension.getViews({ type: 'popup' })[0],
+            jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
             if (resCode == 'done' || resCode == 'item not found') {
                 delete pages[url];
                 updateSelectedTabExtIcon();
+                popup && popup.$rootScope &&
+                    popup.$rootScope.$broadcast('deletepost-succeed');
             } else {
-                // error
+                popup && popup.$rootScope &&
+                    (popup.$rootScope.postErrorText = 'Delete failed: ' + data.result_code) &&
+                    popup.$rootScope.$broadcast('deletepost-failed');
             }
-            var popup = chrome.extension.getViews({ type: 'popup' })[0];
-            popup && popup.close();
+        });
+        jqxhr.fail(function (data) {
+            popup && popup.$rootScope &&
+                (popup.$rootScope.postErrorText = 'Delete failed: ' + data.statusText) &&
+                popup.$rootScope.$broadcast('deletepost-failed');
         });
     }
 };

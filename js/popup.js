@@ -51,6 +51,16 @@
                     $window.close();
                 });
 
+                $scope.$on('deletepost-failed', function () {
+                    $scope.isLoading = false;
+                    $scope.isPostError = true;
+                    $scope.$apply();
+                });
+
+                $scope.$on('deletepost-succeed', function () {
+                    $window.close();
+                });
+
                 $scope.$on('show-loading', function (e, loadingText) {
                     $scope.isLoading = true;
                     $scope.loadingText = loadingText || 'Loading...';
@@ -265,6 +275,7 @@
                 };
 
                 $scope.postDelete = function () {
+                    $scope.isLoading = true;
                     $scope.loadingText = 'Deleting...';
                     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                         var tab = tabs[0];
