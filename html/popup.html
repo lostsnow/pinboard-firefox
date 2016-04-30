@@ -66,13 +66,13 @@
                         <label class="item-title">Tags</label>
                         <input id="tag" type="text" style="width:420px" autofocus="autofocus" ng-model="pageInfo.tag" ng-change="showAutoComplete()" ng-keydown="chooseTag($event)"/>
                     </li>
-                    <li>
+                    <li ng-show="suggests.length > 0">
                         <label class="item-title">Suggest</label>
-                        <span id="suggest">
+                        <div id="suggest">
                             <a href="#" ng-class="{'selected':pageInfo.tag.split(' ').indexOf(suggest) != -1}"
                                ng-repeat="suggest in suggests" ng-click="addTags([suggest])">{{suggest}}</a>
                             <a href="#" id="add-all" ng-click="addTags(suggests)">Add all</a>
-                        </span>
+                        </div>
                     </li>
                     <li>
                         <input type="checkbox" name="private" id="private" ng-model="pageInfo.isPrivate" ng-checked="pageInfo.isPrivate">
