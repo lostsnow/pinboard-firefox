@@ -14,7 +14,7 @@
             <div id="header">
                 <div class="logo-unlogin">Pinboard - please login</div>
             </div>
-            <form id="login-form" ng-submit="loginSubmit()">
+            <form id="login-form" ng-submit="loginSubmit()" ng-show="!isLoading">
                 <ul>
                     <li id="login-error" ng-show="isLoginError">
                         <span style="color:red;">Login Failed.</span>
