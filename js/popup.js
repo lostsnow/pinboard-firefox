@@ -47,7 +47,7 @@
                 });
 
                 var copySelOrMetaToDesc = function () {
-                    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tab) {
+                    chrome.tabs.query({ active: true, currentWindow: true }, function (tab) {
                         // @TODO: get desc from tab, firefox dose not support tabs.sendRequest() currently(45.0)
                     });
                 };
@@ -60,7 +60,7 @@
                 };
 
                 var renderPageInfo = function () {
-                    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+                    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                         var tab = tabs[0];
                         if (tab.url.indexOf("http://") !== 0 && tab.url.indexOf("https://") !== 0) {
                             pageInfo = {};
@@ -246,7 +246,7 @@
                     info.shared = $scope.pageInfo.isPrivate ? 'no' : 'yes';
                     info.toread = $scope.pageInfo.toread ? 'yes' : 'no';
                     bg.addPost(info);
-                    window.close();
+                    $window.close();
                 };
 
                 $scope.showDeleteConfirm = function () {
@@ -255,7 +255,7 @@
 
                 $scope.postDelete = function () {
                     $scope.loadingText = 'Deleting...';
-                    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+                    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                         var tab = tabs[0];
                         bg.deletePost(tab.url);
                     });
@@ -273,7 +273,7 @@
                     bg.logout();
                 };
 
-                var userInfo = bg.getUserInfo(); console.log(userInfo);
+                var userInfo = bg.getUserInfo();
                 $scope.userInfo = userInfo;
                 $scope.isAnony = !userInfo || !userInfo.isChecked;
                 $scope.isLoading = false;
