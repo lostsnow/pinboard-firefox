@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pinboard+",
-    "version": "0.2.0",
+    "version": "0.2.1",
 
     "description": "A better firefox extension for Pinboard (http://pinboard.in).",
     "icons": {
@@ -26,7 +26,7 @@
 
     "background": {
         "scripts": [
-            "/js/libs/jquery-1.10.1.min.js",
+            "/js/libs/jquery.min.js",
             "/js/libs/underscore-min.js",
             "/js/common.js",
             "/js/utils.js",

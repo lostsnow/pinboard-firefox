@@ -37,7 +37,7 @@
                     $scope.isAnony = true;
                     $scope.isLoading = false;
                     $scope.isLoginError = false;
-                    $scope.$apply();
+                    $scope.$applyAsync();
                 });
 
                 $scope.$on('addpost-failed', function () {
