@@ -12,6 +12,11 @@ Feature
 
 > **WebExtensions are currently in an experimental alpha state. The first stable release in Firefox 48.**
 
+Install
+-------
+
+Install From [Firefox Add-ons site](https://addons.mozilla.org/en-US/firefox/addon/pinboard-plus/)
+
 Thanks
 ------
 
