@@ -8,9 +8,10 @@
                 var bg = chrome.extension.getBackgroundPage(),
                     keyCode = { enter: 13, tab: 9, up: 38, down: 40, ctrl: 17, n: 78, p: 80, space: 32 },
                     SEC = 1000, MIN = SEC * 60, HOUR = MIN * 60, DAY = HOUR * 24, WEEK = DAY * 7;
-                Date.prototype.getTimePassed = function () {
+
+                var getTimePassed = function (date) {
                     var ret = { day: 0, hour: 0, min: 0, sec: 0, offset: -1 },
-                        offset = new Date() - this, r;
+                        offset = new Date() - date, r;
                     if (offset <= 0) return ret;
                     ret.offset = offset;
                     ret.week = Math.floor(offset / WEEK); r = offset % WEEK;
@@ -245,7 +246,7 @@
                 }
 
                 $scope.renderSavedTime = function (time) {
-                    var passed = new Date(time).getTimePassed(),
+                    var passed = getTimePassed(new Date(time)),
                         dispStr = 'previously saved ',
                         w = passed.week, d = passed.day, h = passed.hour;
                     if (passed.offset > WEEK) {
