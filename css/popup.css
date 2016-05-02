@@ -1,10 +1,14 @@
 html {
-    height: 350px;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     width: 480px;
-    height: 335px;
+    height: 320px;
+    margin: 0;
+    padding: 0;
+    background-color: #FFF;
     color: #333;
     font-family: helvetica;
     font-size: 12px;
@@ -22,59 +26,42 @@ ul {
 }
 
 ul li {
-    margin: 0 0 10px 50px;
-    list-style-type: none;
+    margin: 0 0 6px 0;
+    list-style: none;
 }
 
-ul .item-title {
+label.item-title {
+    width: 55px;
+    display: inline-block;
+    padding-right: 5px;
+    height: 24px;
+    line-height: 24px;
     text-align: right;
-    width: 3.2em;
-    display: inline-block;
-    margin: 5px 0 0 -46px;
-    display: block;
-    text-align: right;
-    position: absolute;
+    vertical-align: top;
+}
+input[type="text"], textarea {
+    padding: 1px 5px;
+    border: 1px solid #AAA;
+}
+input[type="text"] {
+    height: 24px;
+}
+input[type="checkbox"], textarea {
+    vertical-align: middle;
+}
+input[type="submit"] {
+    height: 24px;
 }
 
-#suggest {
-    display: inline-block;
-    margin: 5px 0 0 8px;
+.clear {
+    clear: both;
+}
+.nomargin {
+    margin: 0
 }
 
-#suggest a {
-    display: inline-block;
-    margin: 0 3px 3px 0;
-}
-
-#suggest a.selected {
-    color: #BEBEBE;
-}
-
-#suggest a#add-all {
-    color: #888;
-}
-
-#state-mask {
-    position: absolute;
-    width: 100%;
-    margin: 80px auto;
-    height: 195px;
-    background-color: #FFF;
-    z-index: 20;
-    text-align: center;
-}
-
-#login-window {
-    position: absolute;
-    width: 100%;
-    height: 270px;
-    background-color: #FFF;
-    z-index: 10;
-}
-
-#login-window .meta {
-    margin: 5px 0 0 64px;
-    color: #999;
+#wrapper {
+    padding: 1px 5px;
 }
 
 #header {
@@ -86,29 +73,52 @@ ul .item-title {
     position: absolute;
     right: 5px;
 }
-
 #header a {
     color: #AAA;
 }
-
 #header a:hover {
     color: #11A;
 }
-
 #header .logo {
     float: left;
     padding-top: 2px;
 }
 
-.logo-unlogin {
-    float: left;
+#state-mask {
     position: absolute;
-    width: 100%;
-    background-color: #FFF;
+    width: 470px;
+    margin: 80px auto;
+    text-align: center;
 }
 
-#header .random {
-    color: #BBB;
+#login-window ul .item-title {
+    width: 100px;
+}
+
+#login-error span, #login-window .meta, #login-btn {
+    display: inline-block;
+    margin-left: 100px;
+}
+#login-error span {
+    color: red;
+}
+#login-window .meta {
+    margin-top: 5px;
+    color: #999;
+}
+#login-window #token {
+    width: 315px;
+}
+
+#add-post-form ul li {
+    clear: both;
+}
+
+#add-post-form input[type="text"], #add-post-form textarea {
+    width: 390px;
+}
+#add-post-form textarea {
+    height: 55px;
 }
 
 .alert {
@@ -118,7 +128,6 @@ ul .item-title {
     float: left;
     padding: 3px;
     padding-top: 1px;
-    width: 55%;
     border: 1px solid #ACC;
 }
 .alert.alert-error {
@@ -130,7 +139,6 @@ ul .item-title {
     background-color: #FFF;
     border: 1px solid #AAA;
     box-shadow: 1px 1px 3px rgba(0, 0, 110, 0.33);
-    margin-left: 8px;
     min-width: 200px;
     position: absolute;
 }
@@ -155,5 +163,33 @@ ul .item-title {
 
 #blockquote-hint {
     color: #BEBEBE;
-    margin: 2px 0 0;
+    margin: 0 0 0 60px;
+}
+
+#suggest {
+    width: 390px;
+    display: inline-block;
+}
+
+#suggest a {
+    display: inline-block;
+    margin: 3px 3px 0 0;
+}
+
+#suggest a.selected {
+    color: #BEBEBE;
+}
+
+#suggest a#add-all {
+    color: #888;
+}
+
+#submit {
+    margin-right: 10px;
+}
+.opt {
+    padding: 0 3px;
+}
+.opt.opt-destroy {
+    color: red;
 }
