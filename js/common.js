@@ -13,8 +13,23 @@ noblockquoteKey = keyPrefix + 'noblockquote',
 
 mainPath = 'https://api.pinboard.in/v1/',
 
-yesIcon = '/img/icon_colored_19.png',
-noIcon = '/img/icon_grey_19.png',
-savingIcon = '/img/icon_grey_saving_19.png';
+yesIcon = {
+    "18": "/img/icon-blue-18.png",
+    "32": "/img/icon-blue-32.png",
+    "36": "/img/icon-blue-36.png",
+    "64": "/img/icon-blue-64.png"
+},
+noIcon = {
+    "18": "/img/icon-gray-18.png",
+    "32": "/img/icon-gray-32.png",
+    "36": "/img/icon-gray-36.png",
+    "64": "/img/icon-gray-64.png"
+},
+savingIcon = {
+    "18": "/img/icon-gray-saving-18.png",
+    "32": "/img/icon-gray-saving-32.png",
+    "36": "/img/icon-gray-saving-36.png",
+    "64": "/img/icon-gray-saving-64.png"
+};
 
 var REQ_TIME_OUT = 125 * 1000, maxDescLen = 500;
