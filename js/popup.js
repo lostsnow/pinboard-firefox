@@ -115,6 +115,7 @@
                     pageInfo.isPrivate = !pageInfo.shared;
                     $scope.pageInfo = $.extend({}, pageInfo);
                     initAutoComplete();
+                    console.log("get tag suggesting");
                     bg.getSuggest(tab.url);
 
                     $("#url").val(pageInfo.url);
@@ -420,6 +421,7 @@
     };
 
     var postSubmit = function () {
+        console.log("post new bookmark");
         $scope.isLoading = true;
         $scope.loadingText = 'Saving...';
         $postform.hide();
@@ -440,6 +442,7 @@
     };
 
     var postDelete = function () {
+        console.log("delete bookmark");
         $scope.isLoading = true;
         $scope.loadingText = 'Deleting...';
         $postform.hide();
