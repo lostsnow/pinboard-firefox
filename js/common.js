@@ -1,7 +1,7 @@
 // userInfo: name, pwd, isChecked
 var _userInfo = null, _tags = [], keyPrefix = 'pbuinfo',
 checkedkey = keyPrefix + 'c',
-namekey = keyPrefix + 'n', pwdkey = keyPrefix + 'p',
+namekey = keyPrefix + 'n',
 authTokenKey = keyPrefix + '_auth_token',
 
 // config in the settings for not checking page pin state

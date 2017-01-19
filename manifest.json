@@ -1,51 +1,45 @@
 {
     "manifest_version": 2,
     "name": "Pinboard+",
-    "version": "0.2.4",
-
+    "version": "1.0.0-dev",
     "description": "A better firefox extension for Pinboard (http://pinboard.in).",
+    "homepage_url": "https://github.com/lostsnow/pinboard-firefox",
     "icons": {
-        "48": "/img/appicon-48.png",
-        "96": "/img/appicon-96.png"
+        "48": "img/appicon-48.png",
+        "96": "img/appicon-96.png"
     },
-
     "applications": {
         "gecko": {
             "id": "pinboard-plus@lsproc.com",
-            "strict_min_version": "45.0"
+            "strict_min_version": "50.0"
         }
     },
-
     "permissions": [
         "storage",
         "tabs",
-        "http://*/*",
-        "https://*/*"
+        "<all_urls>"
     ],
-
+    "content_security_policy": "script-src 'self'; object-src 'self'",
     "background": {
         "scripts": [
             "/js/libs/jquery.min.js",
-            "/js/libs/underscore-min.js",
-            "/js/common.js",
-            "/js/utils.js",
-            "/js/background.js"
+            "js/common.js",
+            "js/background.js"
         ]
     },
-
     "browser_action": {
-         "default_title": "Pinboard+",
-         "default_icon": {
-            "18": "/img/icon-gray-18.png",
-            "32": "/img/icon-gray-32.png",
-            "36": "/img/icon-gray-36.png",
-            "64": "/img/icon-gray-64.png"
+        "browser_style": true,
+        "default_title": "Pinboard+",
+        "default_icon": {
+            "18": "img/icon-gray-18.png",
+            "32": "img/icon-gray-32.png",
+            "36": "img/icon-gray-36.png",
+            "64": "img/icon-gray-64.png"
         },
-         "default_popup": "/html/popup.html"
+        "default_popup": "html/popup.html"
     },
-
     "options_ui": {
-        "page": "/html/options.html",
+        "page": "html/options.html",
         "open_in_tab": true
     }
 }
