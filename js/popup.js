@@ -40,6 +40,7 @@
     var $loading = $("#state-mask").hide();
     var $login = $("#login-window").hide();
     var $bookmark = $("#bookmark-window").hide();
+    var $postform = $("#add-post-form").hide();
     var $autocomplete = $("#auto-complete").hide();
 
     var renderLoading = function(loadingText) {
@@ -116,9 +117,6 @@
                     initAutoComplete();
                     bg.getSuggest(tab.url);
 
-                    $scope.isLoading = false;
-                    renderLoading();
-
                     $("#url").val(pageInfo.url);
                     $("#title").val(pageInfo.title);
                     $("#desc").val(pageInfo.desc);
@@ -131,6 +129,16 @@
                         $("#toread").prop('toread', true);
                     }
 
+                    renderError();
+
+                    var $savetime = $(".alert-savetime").hide();
+                    if (pageInfo.time) {
+                        $savetime.text(renderSavedTime(pageInfo.time));
+                        $savetime.show();
+                    } else {
+                        $savetime.hide();
+                    }
+
                     if (pageInfo.isSaved === true) {
                         $("#opt-delete").off("click").on("click", function(){
                             $("#opt-cancel-delete").off("click").on("click", function(){
@@ -140,7 +148,7 @@
                             });
 
                             $("#opt-destroy").off("click").on("click", function(){
-                                // @TODO
+                                postDelete();
                                 return false;
                             });
 
@@ -162,6 +170,15 @@
                         chooseTag(e);
                         renderSuggest();
                     });
+
+                    $postform.off("submit").on("submit", function(){
+                        postSubmit();
+                        return false;
+                    });
+
+                    $scope.isLoading = false;
+                    renderLoading();
+
                     $postform.show();
                 });
             } else {
@@ -170,6 +187,24 @@
                 $scope.isLoading = true;
                 renderLoading();
             }
+        } else if (message.type === "addpost-succeed") {
+            $scope.isPostError = false;
+            $window.close();
+        } else if (message.type === "addpost-failed") {
+            $scope.isLoading = false;
+            $scope.isPostError = true;
+            $scope.postErrorText = message.error
+            renderError();
+            renderLoading();
+        } else if (message.type === "deletepost-succeed") {
+            $scope.isPostError = false;
+            $window.close();
+        } else if (message.type === "deletepost-failed") {
+            $scope.isLoading = false;
+            $scope.isPostError = true;
+            $scope.postErrorText = message.error
+            renderError();
+            renderLoading();
         }
     });
 
@@ -186,20 +221,7 @@
     };
 
     var renderPageHeader = function() {
-        var $posterr = $(".alert-error").hide();
-        var $savetime = $(".alert-savetime").hide();
         $("#username").text($scope.userInfo.name);
-        if ($scope.isPostError === true) {
-            $posterr.text($scope.postErrorText);
-        } else {
-            $posterr.hide();
-        }
-
-        if ($scope.pageInfo.time) {
-            $savetime.text(renderSavedTime($scope.pageInfo.time));
-        } else {
-            $savetime.hide();
-        }
 
         $(".logout a").on("click", function() {
             console.log("log out...");
@@ -210,9 +232,19 @@
         });
     };
 
+    var renderError = function() {
+        var $posterr = $(".alert-error").hide();
+        if ($scope.isPostError === true) {
+            $posterr.text($scope.postErrorText);
+            $posterr.show();
+            $postform.show();
+        } else {
+            $posterr.hide();
+        }
+    };
+
     var renderBookmarkPage = function () {
         console.log("rendering bookmark page");
-        $postform = $("#add-post-form").hide();
         $bookmark.show();
         renderPageHeader();
         browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -259,6 +291,7 @@
                     renderAutoComplete();
                 } else if (code == keyCode.enter) {
                     postSubmit();
+                    return false;
                 }
             } else if (code == keyCode.down ||
                 (code == keyCode.n && e.ctrlKey == true)) {
@@ -389,16 +422,29 @@
     var postSubmit = function () {
         $scope.isLoading = true;
         $scope.loadingText = 'Saving...';
-        // @TODO: get value from form
-        var info = $.extend({}, $scope.pageInfo);
-        info.shared = $scope.pageInfo.isPrivate ? 'no' : 'yes';
-        info.toread = $scope.pageInfo.toread ? 'yes' : 'no';
+        $postform.hide();
+        $scope.isPostError = false;
+        renderError();
+        renderLoading();
+
+        var info = {
+            url: $("#url").val(),
+            title: $("#title").val(),
+            desc: $("#desc").val(),
+            tag: $("#tag").val()
+        };
+
+        info.shared = $('#private').prop('checked') ? 'no' : 'yes';
+        info.toread = $('#toread').prop('checked') ? 'yes' : 'no';
         bg.addPost(info);
     };
 
     var postDelete = function () {
         $scope.isLoading = true;
         $scope.loadingText = 'Deleting...';
+        $postform.hide();
+        $scope.isPostError = false;
+        renderError();
         renderLoading();
         browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             var tab = tabs[0];

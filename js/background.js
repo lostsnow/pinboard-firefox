@@ -4,7 +4,6 @@ var pages = {}, _userInfo;
 var login = function (token) {
     // test auth
     var path = mainPath + 'user/api_token',
-        popup = browser.extension.getViews({ type: 'popup' })[0],
         jqxhr = $.ajax({
             url: path,
             data: { format: 'json', auth_token: token },
@@ -82,7 +81,7 @@ var getPageInfo = function (url) {
     }
     var pageInfo = pages[url];
     if (pageInfo) {
-         browser.runtime.sendMessage({
+        browser.runtime.sendMessage({
             type: "render-page-info",
             data: pageInfo
         });
@@ -190,7 +189,6 @@ var addPost = function (info) {
             contentType: 'text/plain'
         };
         settings.data.auth_token = userInfo.authToken;
-        var popup = browser.extension.getViews({ type: 'popup' })[0],
             jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
@@ -199,23 +197,26 @@ var addPost = function (info) {
                 pages[info.url] = { isSaved: true };
                 updateSelectedTabExtIcon();
                 queryPinState({ url: info.url, isForce: true });
-                popup && popup.$rootScope &&
-                    popup.$rootScope.$broadcast('addpost-succeed');
+                browser.runtime.sendMessage({
+                    type: "addpost-succeed"
+                });
             } else {
                 // error
                 pages[info.url] = { isSaved: false };
                 updateSelectedTabExtIcon();
-                popup && popup.$rootScope &&
-                    (popup.$rootScope.postErrorText = 'Add failed: ' + data.result_code) &&
-                    popup.$rootScope.$broadcast('addpost-failed');
+                browser.runtime.sendMessage({
+                    type: "addpost-failed",
+                    error: 'Add failed: ' + data.result_code
+                });
             }
         });
         jqxhr.fail(function (data) {
             pages[info.url] = { isSaved: false };
             updateSelectedTabExtIcon();
-            popup && popup.$rootScope &&
-                (popup.$rootScope.postErrorText = 'Add failed: ' + data.statusText) &&
-                popup.$rootScope.$broadcast('addpost-failed');
+            browser.runtime.sendMessage({
+                type: "addpost-failed",
+                error: 'Add failed: ' + data.statusText
+            });
         });
         // change icon state
         pages[info.url] = { isSaving: true };
@@ -237,25 +238,27 @@ var deletePost = function (url) {
             contentType: 'text/plain'
         };
         settings.data.auth_token = userInfo.authToken;
-        var popup = browser.extension.getViews({ type: 'popup' })[0],
             jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
             if (resCode == 'done' || resCode == 'item not found') {
                 delete pages[url];
                 updateSelectedTabExtIcon();
-                popup && popup.$rootScope &&
-                    popup.$rootScope.$broadcast('deletepost-succeed');
+                browser.runtime.sendMessage({
+                    type: "deletepost-succeed"
+                });
             } else {
-                popup && popup.$rootScope &&
-                    (popup.$rootScope.postErrorText = 'Delete failed: ' + data.result_code) &&
-                    popup.$rootScope.$broadcast('deletepost-failed');
+                browser.runtime.sendMessage({
+                    type: "deletepost-failed",
+                    error: 'Delete failed: ' + data.result_code
+                });
             }
         });
         jqxhr.fail(function (data) {
-            popup && popup.$rootScope &&
-                (popup.$rootScope.postErrorText = 'Delete failed: ' + data.statusText) &&
-                popup.$rootScope.$broadcast('deletepost-failed');
+            browser.runtime.sendMessage({
+                type: "deletepost-failed",
+                error: 'Delete failed: ' + data.statusText
+            });
         });
     }
 };
