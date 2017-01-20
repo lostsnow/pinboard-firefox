@@ -465,6 +465,10 @@
         return false;
     });
 
+    $(".option").off("click").on("click", function () {
+        browser.runtime.openOptionsPage();
+    });
+
     var renderUserInfo = function() {
         var userInfo = bg.getUserInfo();
         $scope.userInfo = userInfo;
