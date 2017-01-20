@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pinboard+",
-    "version": "1.0.0-dev",
+    "version": "1.0.0",
     "description": "A better firefox extension for Pinboard (http://pinboard.in).",
     "homepage_url": "https://github.com/lostsnow/pinboard-firefox",
     "icons": {
