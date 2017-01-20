@@ -124,10 +124,10 @@
                     $("#tag").val(pageInfo.tag);
 
                     if (pageInfo.isPrivate === true) {
-                        $("#private").prop('private', true);
+                        $("#private").prop('checked', true);
                     }
                     if (pageInfo.toread === true) {
-                        $("#toread").prop('toread', true);
+                        $("#toread").prop('checked', true);
                     }
 
                     renderError();
