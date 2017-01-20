@@ -84,6 +84,10 @@ input[type="submit"] {
     padding-top: 2px;
 }
 
+#state-mask, #login-window, #login-error, #bookmark-window, #add-post-form, #auto-complete {
+    display: none;
+}
+
 #state-mask {
     position: absolute;
     width: 470px;
@@ -135,7 +139,7 @@ input[type="submit"] {
     border: 1px solid #FFB3B3;
 }
 
-.auto-complete {
+#auto-complete {
     background-color: #FFF;
     border: 1px solid #AAA;
     box-shadow: 1px 1px 3px rgba(0, 0, 110, 0.33);
@@ -143,7 +147,7 @@ input[type="submit"] {
     position: absolute;
 }
 
-.auto-complete li {
+#auto-complete li {
     background-color: #FFF;
     border-bottom: 0 solid #FFF;
     color: #2255AA;
@@ -152,12 +156,12 @@ input[type="submit"] {
     cursor: pointer;
 }
 
-.auto-complete .active {
+#auto-complete .active {
     background-color: #969696;
     color: #FFF;
 }
 
-.auto-complete li.exclude {
+#auto-complete li.exclude {
     display: none;
 }
 

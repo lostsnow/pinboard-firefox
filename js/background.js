@@ -1,80 +1,9 @@
 // {url: {title, desc, tag, time, isSaved, isSaving}}
 var pages = {}, _userInfo;
 
-var makeBasicAuthHeader = function (user, password) {
-    var tok = user + ':' + password;
-    var hash = btoa(tok);
-    return "Basic " + hash;
-};
-
-var makeUserAuthHeader = function () {
-    var userInfo = getUserInfo();
-    return makeBasicAuthHeader(userInfo.name, userInfo.pwd);
-};
-
-var logout = function () {
-    _userInfo.isChecked = false;
-    localStorage.removeItem(checkedkey);
-    localStorage.removeItem(namekey);
-    localStorage.removeItem(pwdkey);
-    localStorage.removeItem(authTokenKey);
-    localStorage.removeItem(nopingKey);
-    var popup = chrome.extension.getViews({ type: 'popup' })[0];
-    popup && popup.$rootScope &&
-        popup.$rootScope.$broadcast('logged-out');
-};
-
-var getUserInfo = function () {
-    if (!_userInfo) {
-        if (localStorage[checkedkey]) {
-            _userInfo = {
-                isChecked: localStorage[checkedkey],
-                authToken: localStorage[authTokenKey],
-                name: localStorage[namekey],
-                pwd: localStorage[pwdkey]
-            };
-        } else {
-            _userInfo = {
-                isChecked: false, authToken: '',
-                name: '', pwd: ''
-            };
-        }
-    }
-    return _userInfo;
-};
-
-// for popup.html to acquire page info
-// if there is no page info at local then get it from server
-var getPageInfo = function (url) {
-    if (!url || url.indexOf('chrome://') == 0 || localStorage[nopingKey] === 'true') {
-        return { url: url, isSaved: false };
-    }
-    var pageInfo = pages[url];
-    if (pageInfo) {
-        return pageInfo;
-    }
-    // download now
-    updatePageInfo(url);
-    return null;
-};
-
-// refresh page info even page info has fetched from server
-var updatePageInfo = function (url) {
-    var popup = chrome.extension.getViews({ type: 'popup' })[0];
-    popup && popup.$rootScope &&
-        popup.$rootScope.$broadcast('show-loading', 'Loading bookmark...');
-    var cb = function (pageInfo) {
-        popup && popup.$rootScope &&
-            popup.$rootScope.$broadcast('render-page-info', pageInfo);
-        updateSelectedTabExtIcon();
-    };
-    queryPinState({ url: url, ready: cb });
-};
-
 var login = function (token) {
     // test auth
     var path = mainPath + 'user/api_token',
-        popup = chrome.extension.getViews({ type: 'popup' })[0],
         jqxhr = $.ajax({
             url: path,
             data: { format: 'json', auth_token: token },
@@ -93,30 +22,84 @@ var login = function (token) {
             localStorage[namekey] = _userInfo.name;
             localStorage[authTokenKey] = token;
             localStorage[checkedkey] = true;
-            popup && popup.$rootScope &&
-                popup.$rootScope.$broadcast('login-succeed');
+
+            browser.runtime.sendMessage({
+                type: "login-succeed"
+            });
             _getTags();
         } else {
             // login error
-            popup && popup.$rootScope &&
-                popup.$rootScope.$broadcast('login-failed');
+            browser.runtime.sendMessage({
+                type: "login-failed"
+            });
         }
     });
     jqxhr.fail(function (data) {
         if (data.statusText == 'timeout') {
-            popup && popup.$rootScope &&
-                popup.$rootScope.$broadcast('login-failed');
+            browser.runtime.sendMessage({
+                type: "login-failed"
+            });
         }
     });
 };
 
-var QUERY_INTERVAL = 3 * 1000, isQuerying = false, tQuery;
+var logout = function () {
+    _userInfo.isChecked = false;
+    localStorage.removeItem(checkedkey);
+    localStorage.removeItem(namekey);
+    localStorage.removeItem(authTokenKey);
+    localStorage.removeItem(nopingKey);
+    browser.runtime.sendMessage({
+        type: "logged-out"
+    });
+};
+
+var getUserInfo = function () {
+    if (!_userInfo) {
+        if (localStorage[checkedkey]) {
+            _userInfo = {
+                isChecked: localStorage[checkedkey],
+                authToken: localStorage[authTokenKey],
+                name: localStorage[namekey],
+            };
+        } else {
+            _userInfo = {
+                isChecked: false,
+                authToken: '',
+                name: ''
+            };
+        }
+    }
+    return _userInfo;
+};
+
+// for popup.html to acquire page info
+// if there is no page info at local then get it from server
+var getPageInfo = function (url) {
+    if (!url || (url.indexOf('https://') !== 0 && url.indexOf('http://') !== 0) || localStorage[nopingKey] === 'true') {
+        return { url: url, isSaved: false };
+    }
+    var pageInfo = pages[url];
+    if (pageInfo) {
+        browser.runtime.sendMessage({
+            type: "render-page-info",
+            data: pageInfo
+        });
+        return;
+    }
+    // download now
+    var cb = function () {
+        updateSelectedTabExtIcon();
+    };
+    queryPinState({ url: url, ready: cb });
+};
+
+var isQuerying = false;
 var queryPinState = function (info) {
     var userInfo = getUserInfo(),
         url = info.url,
         handler = function (data) {
             isQuerying = false;
-            clearTimeout(tQuery);
             var posts = data.posts,
                 pageInfo = { isSaved: false };
             if (posts.length) {
@@ -132,42 +115,43 @@ var queryPinState = function (info) {
                     isSaved: true
                 };
             }
+
+            browser.runtime.sendMessage({
+                type: "render-page-info",
+                data: pageInfo
+            });
             pages[url] = pageInfo;
             info.ready && info.ready(pageInfo);
         };
     if ((info.isForce || !isQuerying) && userInfo && userInfo.isChecked &&
-        info.url && info.url != 'chrome://newtab/') {
+        info.url && (url.indexOf('https://') === 0 || url.indexOf('http://') === 0)) {
         isQuerying = true;
-        clearTimeout(tQuery);
-        tQuery = setTimeout(function () {
-            isQuerying = false;
-        }, QUERY_INTERVAL);
         var settings = {
             url: mainPath + 'posts/get',
             type: 'GET',
             data: { url: url, format: 'json' },
-            //timeout: REQ_TIME_OUT,
+            // timeout: REQ_TIME_OUT,
             dataType: 'json',
             crossDomain: true,
             contentType: 'text/plain'
         };
-        if (userInfo.authToken) {
-            settings.data.auth_token = userInfo.authToken;
-        } else {
-            settings.headers = { 'Authorization': makeUserAuthHeader() };
-        }
+        settings.data.auth_token = userInfo.authToken;
         var jqxhr = $.ajax(settings);
         jqxhr.always(handler);
         jqxhr.fail(function (data) {
+            isQuerying = false;
             if (data.statusText == 'timeout') {
                 delete pages[url];
             }
+            browser.runtime.sendMessage({
+                type: "render-page-info"
+            });
         });
     }
 };
 
 var updateSelectedTabExtIcon = function () {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         var tab = tabs[0];
         var pageInfo = pages[tab.url];
         var iconPath = noIcon;
@@ -176,7 +160,7 @@ var updateSelectedTabExtIcon = function () {
         } else if (pageInfo && pageInfo.isSaving) {
             iconPath = savingIcon;
         }
-        chrome.browserAction.setIcon(
+        browser.browserAction.setIcon(
             { path: iconPath, tabId: tab.id });
     });
 };
@@ -204,12 +188,7 @@ var addPost = function (info) {
             data: data,
             contentType: 'text/plain'
         };
-        if (userInfo.authToken) {
-            settings.data.auth_token = userInfo.authToken;
-        } else {
-            settings.headers = { 'Authorization': makeUserAuthHeader() };
-        }
-        var popup = chrome.extension.getViews({ type: 'popup' })[0],
+        settings.data.auth_token = userInfo.authToken;
             jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
@@ -218,23 +197,26 @@ var addPost = function (info) {
                 pages[info.url] = { isSaved: true };
                 updateSelectedTabExtIcon();
                 queryPinState({ url: info.url, isForce: true });
-                popup && popup.$rootScope &&
-                    popup.$rootScope.$broadcast('addpost-succeed');
+                browser.runtime.sendMessage({
+                    type: "addpost-succeed"
+                });
             } else {
                 // error
                 pages[info.url] = { isSaved: false };
                 updateSelectedTabExtIcon();
-                popup && popup.$rootScope &&
-                    (popup.$rootScope.postErrorText = 'Add failed: ' + data.result_code) &&
-                    popup.$rootScope.$broadcast('addpost-failed');
+                browser.runtime.sendMessage({
+                    type: "addpost-failed",
+                    error: 'Add failed: ' + data.result_code
+                });
             }
         });
         jqxhr.fail(function (data) {
             pages[info.url] = { isSaved: false };
             updateSelectedTabExtIcon();
-            popup && popup.$rootScope &&
-                (popup.$rootScope.postErrorText = 'Add failed: ' + data.statusText) &&
-                popup.$rootScope.$broadcast('addpost-failed');
+            browser.runtime.sendMessage({
+                type: "addpost-failed",
+                error: 'Add failed: ' + data.statusText
+            });
         });
         // change icon state
         pages[info.url] = { isSaving: true };
@@ -255,30 +237,28 @@ var deletePost = function (url) {
             data: { url: url, format: 'json' },
             contentType: 'text/plain'
         };
-        if (userInfo.authToken) {
-            settings.data.auth_token = userInfo.authToken;
-        } else {
-            settings.headers = { 'Authorization': makeUserAuthHeader() };
-        }
-        var popup = chrome.extension.getViews({ type: 'popup' })[0],
+        settings.data.auth_token = userInfo.authToken;
             jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var resCode = data.result_code;
             if (resCode == 'done' || resCode == 'item not found') {
                 delete pages[url];
                 updateSelectedTabExtIcon();
-                popup && popup.$rootScope &&
-                    popup.$rootScope.$broadcast('deletepost-succeed');
+                browser.runtime.sendMessage({
+                    type: "deletepost-succeed"
+                });
             } else {
-                popup && popup.$rootScope &&
-                    (popup.$rootScope.postErrorText = 'Delete failed: ' + data.result_code) &&
-                    popup.$rootScope.$broadcast('deletepost-failed');
+                browser.runtime.sendMessage({
+                    type: "deletepost-failed",
+                    error: 'Delete failed: ' + data.result_code
+                });
             }
         });
         jqxhr.fail(function (data) {
-            popup && popup.$rootScope &&
-                (popup.$rootScope.postErrorText = 'Delete failed: ' + data.statusText) &&
-                popup.$rootScope.$broadcast('deletepost-failed');
+            browser.runtime.sendMessage({
+                type: "deletepost-failed",
+                error: 'Delete failed: ' + data.statusText
+            });
         });
     }
 };
@@ -291,22 +271,22 @@ var getSuggest = function (url) {
             url: path,
             type: 'GET',
             data: { url: url, format: 'json' },
-            timeout: REQ_TIME_OUT,
+            // timeout: REQ_TIME_OUT,
             dataType: 'json',
             crossDomain: true,
             contentType: 'text/plain'
         };
-        if (userInfo.authToken) {
-            settings.data.auth_token = userInfo.authToken;
-        } else {
-            settings.headers = { 'Authorization': makeUserAuthHeader() };
-        }
+        settings.data.auth_token = userInfo.authToken;
         var jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             var popularTags = [], recommendedTags = [];
             if (data) {
-                popularTags = data[0].popular;
-                recommendedTags = data[1].recommended;
+                if (data[0]) {
+                    popularTags = data[0].popular;
+                }
+                if (data[1]) {
+                    recommendedTags = data[1].recommended;
+                }
             }
             // default to popluar tags, add new recommended tags
             var suggests = popularTags.slice();
@@ -315,9 +295,10 @@ var getSuggest = function (url) {
                     suggests.push(tag);
                 }
             });
-            var popup = chrome.extension.getViews({ type: 'popup' })[0];
-            popup && popup.$rootScope &&
-                popup.$rootScope.$broadcast('render-suggests', suggests);
+            browser.runtime.sendMessage({
+                type: "render-suggests",
+                data: suggests
+            });
         });
     }
 };
@@ -326,7 +307,7 @@ var _tags = [], _tagsWithCount = {};
 // acquire all user tags from server refresh _tags
 var _getTags = function () {
     var userInfo = getUserInfo();
-    if (userInfo && userInfo.isChecked) {
+    if (userInfo && userInfo.isChecked && userInfo.authToken) {
         var path = mainPath + 'tags/get',
             settings = {
                 url: path,
@@ -337,18 +318,21 @@ var _getTags = function () {
                 crossDomain: true,
                 contentType: 'text/plain'
             };
-        if (userInfo.authToken) {
-            settings.data.auth_token = userInfo.authToken;
-        } else {
-            settings.headers = { 'Authorization': makeUserAuthHeader() };
-        }
+        settings.data.auth_token = userInfo.authToken;
         var jqxhr = $.ajax(settings);
         jqxhr.always(function (data) {
             if (data) {
-                _tags = _.sortBy(_.keys(data),
-                    function (tag) {
-                        return data[tag].count;
-                    }).reverse();
+                var sortTags = [];
+                for (var t in data) {
+                    sortTags.push([t, data[t]]);
+                }
+                sortTags.sort(function (a, b) {
+                    return b[1] - a[1];
+                })
+
+                for (var i in sortTags) {
+                    _tags.push(sortTags[i][0]);
+                }
             }
         });
     }
@@ -362,68 +346,75 @@ var getTagsWithCount = function () {
     return _tagsWithCount;
 };
 
-
 // query at first time extension loaded
-chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
     if (localStorage[nopingKey] === 'true') {
         return;
     }
+    console.log("query tab pin state on loaded");
     queryPinState({
         url: tab.url,
         ready: function (pageInfo) {
             if (pageInfo && pageInfo.isSaved) {
-                chrome.browserAction.setIcon(
+                browser.browserAction.setIcon(
                     { path: yesIcon, tabId: tab.id });
+            } else {
+                browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
             }
         }
     });
 });
 
-chrome.tabs.onUpdated.addListener(
-    function (id, changeInfo, tab) {
-        if (localStorage[nopingKey] === 'true') {
-            return;
-        }
-        if (changeInfo.url) {
-            var url = changeInfo.url;
-            if (!pages.hasOwnProperty(url)) {
-                chrome.browserAction.setIcon({ path: noIcon, tabId: tab.id });
-                queryPinState({
-                    url: url,
-                    ready: function (pageInfo) {
-                        if (pageInfo && pageInfo.isSaved) {
-                            chrome.browserAction.setIcon(
-                                { path: yesIcon, tabId: tab.id });
-                        }
+browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
+    if (localStorage[nopingKey] === 'true') {
+        return;
+    }
+    if (changeInfo.url) {
+        var url = changeInfo.url;
+        if (!pages.hasOwnProperty(url)) {
+            console.log("query tab pin state on updated");
+            browser.browserAction.setIcon({ path: noIcon, tabId: tab.id });
+            queryPinState({
+                url: url,
+                ready: function (pageInfo) {
+                    if (pageInfo && pageInfo.isSaved) {
+                        browser.browserAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
+                    } else {
+                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
                     }
-                });
-            }
+                }
+            });
         }
-        var url = changeInfo.url || tab.url;
-        if (pages[url] && pages[url].isSaved) {
-            chrome.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
-        }
-    });
+    }
+    console.log("set tab pin state on opening");
+    var url = changeInfo.url || tab.url;
+    if (pages[url] && pages[url].isSaved) {
+        browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
+    }
+});
 
-chrome.tabs.onSelectionChanged.addListener(
-    function (tabId, selectInfo) {
-        if (localStorage[nopingKey] === 'true') {
-            return;
-        }
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            var tab = tabs[0];
-            var url = tab.url;
-            if (!pages.hasOwnProperty(url)) {
-                queryPinState({
-                    url: url,
-                    ready: function (pageInfo) {
-                        if (pageInfo && pageInfo.isSaved) {
-                            chrome.browserAction.setIcon(
-                                { path: yesIcon, tabId: tab.id });
-                        }
+browser.tabs.onActivated.addListener(function (activeInfo) {
+    if (localStorage[nopingKey] === 'true') {
+        return;
+    }
+    browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        var tab = tabs[0];
+        var url = tab.url;
+        if (!pages.hasOwnProperty(url)) {
+            console.log("query tab pin state on actived");
+            queryPinState({
+                url: url,
+                ready: function (pageInfo) {
+                    if (pageInfo && pageInfo.isSaved) {
+                        browser.browserAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
+                    } else {
+                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     });
+});
