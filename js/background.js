@@ -352,61 +352,69 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (localStorage[nopingKey] === 'true') {
         return;
     }
+    console.log("query tab pin state on loaded");
     queryPinState({
         url: tab.url,
         ready: function (pageInfo) {
             if (pageInfo && pageInfo.isSaved) {
                 browser.browserAction.setIcon(
                     { path: yesIcon, tabId: tab.id });
+            } else {
+                browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
             }
         }
     });
 });
 
-browser.tabs.onUpdated.addListener(
-    function (id, changeInfo, tab) {
-        if (localStorage[nopingKey] === 'true') {
-            return;
-        }
-        if (changeInfo.url) {
-            var url = changeInfo.url;
-            if (!pages.hasOwnProperty(url)) {
-                browser.browserAction.setIcon({ path: noIcon, tabId: tab.id });
-                queryPinState({
-                    url: url,
-                    ready: function (pageInfo) {
-                        if (pageInfo && pageInfo.isSaved) {
-                            browser.browserAction.setIcon(
-                                { path: yesIcon, tabId: tab.id });
-                        }
+browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
+    if (localStorage[nopingKey] === 'true') {
+        return;
+    }
+    if (changeInfo.url) {
+        var url = changeInfo.url;
+        if (!pages.hasOwnProperty(url)) {
+            console.log("query tab pin state on updated");
+            browser.browserAction.setIcon({ path: noIcon, tabId: tab.id });
+            queryPinState({
+                url: url,
+                ready: function (pageInfo) {
+                    if (pageInfo && pageInfo.isSaved) {
+                        browser.browserAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
+                    } else {
+                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
                     }
-                });
-            }
+                }
+            });
         }
-        var url = changeInfo.url || tab.url;
-        if (pages[url] && pages[url].isSaved) {
-            browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
+    }
+    console.log("set tab pin state on opening");
+    var url = changeInfo.url || tab.url;
+    if (pages[url] && pages[url].isSaved) {
+        browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
+    }
+});
+
+browser.tabs.onActivated.addListener(function (activeInfo) {
+    if (localStorage[nopingKey] === 'true') {
+        return;
+    }
+    browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        var tab = tabs[0];
+        var url = tab.url;
+        if (!pages.hasOwnProperty(url)) {
+            console.log("query tab pin state on actived");
+            queryPinState({
+                url: url,
+                ready: function (pageInfo) {
+                    if (pageInfo && pageInfo.isSaved) {
+                        browser.browserAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
+                    } else {
+                        browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                    }
+                }
+            });
         }
     });
-
-// browser.tabs.onSelectionChanged.addListener(
-//     function (tabId, selectInfo) {
-//         if (localStorage[nopingKey] === 'true') {
-//             return;
-//         }
-//         browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//             var tab = tabs[0];
-//             var url = tab.url;
-//             if (!pages.hasOwnProperty(url)) {
-//                 queryPinState({
-//                     url: url,
-//                     ready: function (pageInfo) {
-//                         if (pageInfo && pageInfo.isSaved) {
-//                             browser.browserAction.setIcon(
-//                                 { path: yesIcon, tabId: tab.id });
-//                         }
-//                     }
-//                 });
-//             }
-//         });
-//     });
+});
