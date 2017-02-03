@@ -3,6 +3,11 @@
         keyCode = { enter: 13, tab: 9, up: 38, down: 40, ctrl: 17, n: 78, p: 80, space: 32 },
         SEC = 1000, MIN = SEC * 60, HOUR = MIN * 60, DAY = HOUR * 24, WEEK = DAY * 7;
 
+    var escapeHTML = function (str) {
+        var replacements = { "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" };
+        return str.replace(/[&"'<>]/g, (m) => replacements[m]);
+    }
+
     var getTimePassed = function (date) {
         var ret = { day: 0, hour: 0, min: 0, sec: 0, offset: -1 },
             offset = new Date() - date, r;
@@ -372,7 +377,7 @@
                 if (item.isActive === true) {
                     cls = "active";
                 }
-                $("#auto-complete ul").append('<li class="' + cls + '">' + item.text + '</li>');
+                $("#auto-complete ul").append('<li class="' + cls + '">' + escapeHTML(item.text) + '</li>');
             });
             $autocomplete.show();
         } else {
@@ -388,7 +393,7 @@
                 if ($scope.pageInfo.tag.split(' ').indexOf(suggest) != -1) {
                     cls += " selected";
                 }
-                $("#suggest").append('<a href="#" class="' + cls + '">' + suggest + '</a>');
+                $("#suggest").append('<a href="#" class="' + cls + '">' + escapeHTML(suggest) + '</a>');
             });
             $("#suggest").append('<a href="#" class="add-all-tag">Add all</a>')
             $(".add-tag").off("click").on("click", function(){
