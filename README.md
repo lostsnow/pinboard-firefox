@@ -3,7 +3,7 @@ Pinboard+
 
 A better firefox add-on for [Pinboard.in](http://pinboard.in).
 
-Current version: 1.0.0
+Current version: 1.0.1
 
 Feature
 -------
