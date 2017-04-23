@@ -11,6 +11,7 @@ Feature
 * Built with Firefox [WebExtensions](https://developer.mozilla.org/en-US/Add-ons/WebExtensions)
 * Add/Update/Delete bookmark from the popup window.
 * Icon changing to show current page has been saved or not.
+* Keyboard shortcut Alt+P to open popup window
 
 Install
 -------
