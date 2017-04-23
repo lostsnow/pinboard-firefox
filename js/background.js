@@ -76,7 +76,7 @@ var getUserInfo = function () {
 // for popup.html to acquire page info
 // if there is no page info at local then get it from server
 var getPageInfo = function (url) {
-    if (!url || (url.indexOf('https://') !== 0 && url.indexOf('http://') !== 0) || localStorage[nopingKey] === 'true') {
+    if (!url || (url.indexOf('https://') !== 0 && url.indexOf('http://') !== 0)) {
         return { url: url, isSaved: false };
     }
     var pageInfo = pages[url];
