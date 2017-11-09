@@ -353,14 +353,18 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         return;
     }
     console.log("query tab pin state on loaded");
+    attemptPageAction(tab);
     queryPinState({
         url: tab.url,
         ready: function (pageInfo) {
             if (pageInfo && pageInfo.isSaved) {
                 browser.browserAction.setIcon(
                     { path: yesIcon, tabId: tab.id });
+                browser.pageAction.setIcon(
+                    { path: yesIcon, tabId: tab.id });
             } else {
                 browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
             }
         }
     });
@@ -375,14 +379,18 @@ browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
         if (!pages.hasOwnProperty(url)) {
             console.log("query tab pin state on updated");
             browser.browserAction.setIcon({ path: noIcon, tabId: tab.id });
+            attemptPageAction(tab);
             queryPinState({
                 url: url,
                 ready: function (pageInfo) {
                     if (pageInfo && pageInfo.isSaved) {
                         browser.browserAction.setIcon(
                             { path: yesIcon, tabId: tab.id });
+                        browser.pageAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
                     } else {
                         browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                        browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
                     }
                 }
             });
@@ -390,6 +398,7 @@ browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
     }
     console.log("set tab pin state on opening");
     var url = changeInfo.url || tab.url;
+    attemptPageAction(tab);
     if (pages[url] && pages[url].isSaved) {
         browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
     }
@@ -404,17 +413,32 @@ browser.tabs.onActivated.addListener(function (activeInfo) {
         var url = tab.url;
         if (!pages.hasOwnProperty(url)) {
             console.log("query tab pin state on actived");
+            attemptPageAction(tab);
             queryPinState({
                 url: url,
                 ready: function (pageInfo) {
                     if (pageInfo && pageInfo.isSaved) {
                         browser.browserAction.setIcon(
                             { path: yesIcon, tabId: tab.id });
+                        browser.pageAction.setIcon(
+                            { path: yesIcon, tabId: tab.id });
                     } else {
                         browser.browserAction.setIcon({path: noIcon, tabId: tab.id});
+                        browser.pageAction.setIcon({path: noIcon, tabId: tab.id});
                     }
                 }
             });
         }
     });
 });
+
+/*
+Attempt to create a page action on this tab.
+Do not show if options checkbox is checked or this is an invalid tab.
+*/
+function attemptPageAction(tab) {
+    browser.pageAction.hide(tab.id);
+    if (localStorage[nopageaction] !== 'true' && (tab.url.indexOf("http://") !== -1 || tab.url.indexOf("https://") !== -1)) {
+        browser.pageAction.show(tab.id);
+    }
+}

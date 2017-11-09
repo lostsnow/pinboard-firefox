@@ -37,6 +37,17 @@
         },
         "default_popup": "html/popup.html"
     },
+    "page_action": {
+        "browser_style": true,
+        "default_title": "Pinboard+",
+        "default_icon": {
+            "18": "img/icon-gray-18.png",
+            "32": "img/icon-gray-32.png",
+            "36": "img/icon-gray-36.png",
+            "64": "img/icon-gray-64.png"
+        },
+        "default_popup": "html/popup.html"
+    },
     "options_ui": {
         "page": "html/options.html",
         "open_in_tab": true
