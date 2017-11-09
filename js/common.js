@@ -8,6 +8,8 @@ authTokenKey = keyPrefix + '_auth_token',
 nopingKey = keyPrefix + 'np',
 // config in the settings for always check the private checkbox
 allprivateKey = keyPrefix + 'allprivate',
+// config in the settings for disabling page action
+nopageaction = keyPrefix + 'nopageaction',
 
 mainPath = 'https://api.pinboard.in/v1/',
 

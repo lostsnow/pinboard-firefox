@@ -10,4 +10,9 @@ $(function() {
         var value = $(this).is(':checked');
         localStorage[allprivateKey] = value;
     });
+    $('#no-page-action').attr('checked', localStorage[nopageaction] === 'true')
+    .click(function () {
+        var value = $(this).is(':checked');
+        localStorage[nopageaction] = value;
+    });
 });
