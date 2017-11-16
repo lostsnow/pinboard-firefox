@@ -162,6 +162,8 @@ var updateSelectedTabExtIcon = function () {
         }
         browser.browserAction.setIcon(
             { path: iconPath, tabId: tab.id });
+        browser.pageAction.setIcon(
+            { path: iconPath, tabId: tab.id });
     });
 };
 
@@ -401,6 +403,7 @@ browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
     attemptPageAction(tab);
     if (pages[url] && pages[url].isSaved) {
         browser.browserAction.setIcon({ path: yesIcon, tabId: tab.id });
+        browser.pageAction.setIcon({ path: yesIcon, tabId: tab.id });
     }
 });
 
