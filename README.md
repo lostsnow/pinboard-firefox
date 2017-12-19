@@ -3,12 +3,11 @@ Pinboard+
 
 A better firefox add-on for [Pinboard.in](http://pinboard.in).
 
-Current version: 1.0.2
+Current version: 1.1.0
 
 Feature
 -------
 
-* Built with Firefox [WebExtensions](https://developer.mozilla.org/en-US/Add-ons/WebExtensions)
 * Add/Update/Delete bookmark from the popup window.
 * Icon changing to show current page has been saved or not.
 * Keyboard shortcut Alt+P to open popup window
