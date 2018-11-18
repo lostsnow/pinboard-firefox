@@ -297,6 +297,8 @@ var getSuggest = function (url) {
                     suggests.push(tag);
                 }
             });
+            suggests = filterSuggests(suggests);
+            console.log("Suggested: ", suggests);
             browser.runtime.sendMessage({
                 type: "render-suggests",
                 data: suggests
@@ -304,6 +306,25 @@ var getSuggest = function (url) {
         });
     }
 };
+
+var filterSuggests = function(suggestedTags){
+    let filteredTags = localStorage[tagfilterkey];
+    if(filteredTags && filteredTags.replace(/\s/g,'').length > 0){
+        filteredTags = filteredTags.toLowerCase().replace(/\s/g,'').split(',');
+    }
+    const lcSuggestedTags = suggestedTags.map(function(tag){ return tag.toLowerCase();});
+    console.log("Filters: ", filteredTags)
+    console.log("Suggested Tags: ", suggestedTags)
+    $.each(filteredTags, function(index, tag){
+        const suggestedIdx = lcSuggestedTags.indexOf(tag);
+        if(suggestedIdx > -1){
+            suggestedTags.splice(suggestedIdx,1);
+            lcSuggestedTags.splice(suggestedIdx,1);
+        }
+    });
+    console.log("Filtered Tags: ", suggestedTags)
+    return suggestedTags;
+}
 
 var _tags = [], _tagsWithCount = {};
 // acquire all user tags from server refresh _tags

@@ -10,6 +10,8 @@ nopingKey = keyPrefix + 'np',
 allprivateKey = keyPrefix + 'allprivate',
 // config in the settings for disabling page action
 nopageaction = keyPrefix + 'nopageaction',
+//config in settings for filtering suggested tags
+tagfilterkey = keyPrefix + 'tagfilter',
 
 mainPath = 'https://api.pinboard.in/v1/',
 

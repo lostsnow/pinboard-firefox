@@ -47,3 +47,29 @@ span.checkbox input {
 p {
     margin: 0 0 12px 0;
 }
+
+p.tag-filter{
+    margin-top: 30px;
+}
+
+p.tag-filter label{
+    font-size: 14px;
+}
+
+p.tag-filter textarea{
+    display: block;
+    margin: 10px 0px;
+}
+
+button {
+    background-color: dodgerblue;
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
