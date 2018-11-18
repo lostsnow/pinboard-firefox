@@ -298,7 +298,6 @@ var getSuggest = function (url) {
                 }
             });
             suggests = filterSuggests(suggests);
-            console.log("Suggested: ", suggests);
             browser.runtime.sendMessage({
                 type: "render-suggests",
                 data: suggests
@@ -313,8 +312,6 @@ var filterSuggests = function(suggestedTags){
         filteredTags = filteredTags.toLowerCase().replace(/\s/g,'').split(',');
     }
     const lcSuggestedTags = suggestedTags.map(function(tag){ return tag.toLowerCase();});
-    console.log("Filters: ", filteredTags)
-    console.log("Suggested Tags: ", suggestedTags)
     $.each(filteredTags, function(index, tag){
         const suggestedIdx = lcSuggestedTags.indexOf(tag);
         if(suggestedIdx > -1){
@@ -322,7 +319,6 @@ var filterSuggests = function(suggestedTags){
             lcSuggestedTags.splice(suggestedIdx,1);
         }
     });
-    console.log("Filtered Tags: ", suggestedTags)
     return suggestedTags;
 }
 

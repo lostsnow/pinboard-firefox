@@ -18,7 +18,6 @@ $(function() {
     $('#tag-filter').val(localStorage[tagfilterkey])
     $('#tag-filter-save').click(function () {
         var value = $('#tag-filter').val();
-        console.log("Value to save: ", value);
         localStorage[tagfilterkey] = value;
     });
 });
