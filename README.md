@@ -5,6 +5,11 @@ A better firefox add-on for [Pinboard.in](http://pinboard.in).
 
 Current version: 1.1.0
 
+Usage
+-----
+
+* `option` + `p`: Open panel to save bookmark
+
 Feature
 -------
 
