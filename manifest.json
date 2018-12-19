@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pinboard+",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "A better firefox extension for Pinboard (http://pinboard.in).",
     "homepage_url": "https://github.com/lostsnow/pinboard-firefox",
     "icons": {
@@ -11,7 +11,7 @@
     "applications": {
         "gecko": {
             "id": "pinboard-plus@lsproc.com",
-            "strict_min_version": "50.0"
+            "strict_min_version": "57.0"
         }
     },
     "permissions": [
