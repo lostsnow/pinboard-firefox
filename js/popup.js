@@ -186,6 +186,8 @@
                     renderLoading();
 
                     $postform.show();
+
+                    $("#tag").focus();
                 });
             } else {
                 console.log("query bookmark info error");
