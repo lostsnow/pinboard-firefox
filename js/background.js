@@ -265,6 +265,23 @@ var deletePost = function (url) {
     }
 };
 
+var arraysEqual = function(_arr1, _arr2) {
+    if (!Array.isArray(_arr1) || ! Array.isArray(_arr2) || _arr1.length !== _arr2.length) {
+        return false;
+    }
+
+    var arr1 = _arr1.concat().sort();
+    var arr2 = _arr2.concat().sort();
+
+    for (var i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 var getSuggest = function (url) {
     var userInfo = getUserInfo();
     if (userInfo && userInfo.isChecked && url) {
@@ -283,6 +300,11 @@ var getSuggest = function (url) {
         jqxhr.always(function (data) {
             var popularTags = [], recommendedTags = [];
             if (data) {
+                var default_recommended = ["ifttt","twitter","facebook","WSH","objective-c","twitterlink","1960s","@codepo8","Aiviq","art"];
+                if (data[0] && arraysEqual(data[0].popular, ["objective-c"]) && data[1]
+                    && arraysEqual(data[1].recommended, default_recommended)) {
+                    return;
+                }
                 if (data[0]) {
                     popularTags = data[0].popular;
                 }
