@@ -10,6 +10,8 @@ nopingKey = keyPrefix + 'np',
 allprivateKey = keyPrefix + 'allprivate',
 // config in the settings for disabling page action
 nopageaction = keyPrefix + 'nopageaction',
+// config in the settings for wrapping text with <blockquote>
+noblockquoteKey = keyPrefix + 'noblockquote',
 
 mainPath = 'https://api.pinboard.in/v1/',
 
@@ -33,3 +35,9 @@ savingIcon = {
 };
 
 var REQ_TIME_OUT = 125 * 1000, maxDescLen = 500;
+
+
+var isBlockquote = function () {
+    var noBlockquote = localStorage[noblockquoteKey];
+    return typeof noBlockquote == 'undefined' || noBlockquote === 'false';
+};

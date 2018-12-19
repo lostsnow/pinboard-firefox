@@ -165,6 +165,13 @@ input[type="submit"] {
     display: none;
 }
 
+#desc {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11px;
+    color: #333;
+    padding: 3px 5px;
+}
+
 #blockquote-hint {
     color: #BEBEBE;
     margin: 0 0 0 60px;

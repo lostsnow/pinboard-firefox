@@ -10,6 +10,11 @@ $(function() {
         var value = $(this).is(':checked');
         localStorage[allprivateKey] = value;
     });
+    $('#use-blockquote').attr('checked', isBlockquote())
+    .click(function () {
+        var value = $(this).is(':checked');
+        localStorage[noblockquoteKey] = !value;
+    });
     $('#no-page-action').attr('checked', localStorage[nopageaction] === 'true')
     .click(function () {
         var value = $(this).is(':checked');

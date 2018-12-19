@@ -125,8 +125,30 @@
 
                     $("#url").val(pageInfo.url);
                     $("#title").val(pageInfo.title);
-                    $("#desc").val(pageInfo.desc);
                     $("#tag").val(pageInfo.tag);
+                    if (!pageInfo.desc) {
+                        chrome.tabs.sendMessage(
+                            tab.id, {
+                                method: 'getDescription'
+                            },
+                            function (response) {
+                                if (typeof response !== 'undefined' &&
+                                    response.data.length !== 0) {
+                                    var desc = response.data;
+                                    if (desc.length > maxDescLen) {
+                                        desc = desc.slice(0, maxDescLen) + '...';
+                                    }
+                                    if (isBlockquote()) {
+                                        desc = '<blockquote>' + desc + '</blockquote>';
+                                    }
+                                    pageInfo.desc = desc;
+                                    $("#desc").val(pageInfo.desc);
+                                }
+                            }
+                        );
+                    } else {
+                        $("#desc").val(pageInfo.desc);
+                    }
 
                     if (pageInfo.isPrivate === true) {
                         $("#private").prop('checked', true);
