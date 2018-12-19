@@ -5,7 +5,6 @@ html {
 
 body {
     width: 480px;
-    height: 320px;
     margin: 0;
     padding: 0;
     background-color: #FFF;
@@ -89,9 +88,7 @@ input[type="submit"] {
 }
 
 #state-mask {
-    position: absolute;
-    width: 470px;
-    margin: 80px auto;
+    margin: 20px auto 30px;
     text-align: center;
 }
 
@@ -122,7 +119,12 @@ input[type="submit"] {
     width: 390px;
 }
 #add-post-form textarea {
-    height: 55px;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11px;
+    color: #333;
+    padding: 3px 5px;
+    height: 100px;
+    line-height: 1.35em;
 }
 
 .alert {
@@ -165,13 +167,6 @@ input[type="submit"] {
     display: none;
 }
 
-#desc {
-    font-family: "Lucida Console", Monaco, monospace;
-    font-size: 11px;
-    color: #333;
-    padding: 3px 5px;
-}
-
 #blockquote-hint {
     color: #BEBEBE;
     margin: 0 0 0 60px;
@@ -196,7 +191,7 @@ input[type="submit"] {
 }
 
 #submit {
-    margin-right: 10px;
+    margin: 0 0 10px 0;
 }
 .opt {
     padding: 0 3px;
