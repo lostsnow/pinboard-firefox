@@ -118,6 +118,7 @@
                         pageInfo.tag = pageInfo.tag.concat(' ');
                     }
                     pageInfo.isPrivate = !pageInfo.shared;
+                    pageInfo.toread = (localStorage[allreadlater] === 'true');
                     $scope.pageInfo = $.extend({}, pageInfo);
                     initAutoComplete();
                     console.log("get tag suggesting");
