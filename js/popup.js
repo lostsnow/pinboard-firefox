@@ -112,6 +112,7 @@
                             desc: ''
                         };
                         pageInfo.shared = (localStorage[allprivateKey] !== 'true');
+                        pageInfo.toread = (localStorage[allreadlater] === 'true');
                         pageInfo.isSaved = false;
                     }
                     if (pageInfo.tag) {
