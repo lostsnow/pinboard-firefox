@@ -12,6 +12,8 @@ allprivateKey = keyPrefix + 'allprivate',
 nopageaction = keyPrefix + 'nopageaction',
 // config in the settings for wrapping text with <blockquote>
 noblockquoteKey = keyPrefix + 'noblockquote',
+// config in the settings for reading later as default
+allreadlater = keyPrefix + "allreadlater"
 
 mainPath = 'https://api.pinboard.in/v1/',
 
