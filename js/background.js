@@ -223,6 +223,13 @@ var addPost = function (info) {
         // change icon state
         pages[info.url] = { isSaving: true };
         updateSelectedTabExtIcon();
+        // add new tags (if any) to _tags
+        var info_tags = info.tag.split(" ").filter(String);
+        info_tags.forEach(function(tag) {
+            if (_tags.indexOf(tag) == -1) {
+                _tags.push(tag)
+            }
+        });
     }
 };
 
