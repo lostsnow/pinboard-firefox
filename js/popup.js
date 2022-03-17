@@ -280,7 +280,7 @@
         renderPageHeader();
         browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             var tab = tabs[0];
-            if (tab.url.indexOf("http://") !== 0 && tab.url.indexOf("https://") !== 0) {
+            if (tab.url.indexOf("http://") !== 0 && tab.url.indexOf("https://") !== 0 && tab.url.indexOf("ftp://") !== 0) {
                 console.log("invalid tab");
                 $scope.loadingText = 'Please select a valid tab';
                 $scope.isLoading = true;
