@@ -61,7 +61,7 @@
         "open_in_tab": true
     },
     "commands": {
-        "_execute_browser_action": {
+        "_execute_page_action": {
             "suggested_key": {
                 "default": "Alt+P"
             }
