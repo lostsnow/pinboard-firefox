@@ -366,11 +366,10 @@
             word = items[items.length - 1],
             MAX_SHOWN_ITEMS = 5;
         if (word) {
-            word = word.toLowerCase();
             var allTags = $scope.allTags,
                 shownCount = 0, autoCompleteItems = [];
             for (var i = 0, len = allTags.length; i < len && shownCount < MAX_SHOWN_ITEMS; i++) {
-                var tag = allTags[i].toLowerCase();
+                var tag = allTags[i];
                 if (tag.indexOf(word) == 0 && $.inArray(tag, items) === -1) {
                     var item = { text: tag, isActive: false };
                     autoCompleteItems.push(item);
